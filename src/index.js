@@ -10,11 +10,27 @@ app.use(cors());
 const users = [];
 
 function checksExistsUserAccount(request, response, next) {
-  // Complete aqui
+  const { username } = request.headers;
+
+  const user = users.find((user) => user.username === username);
+
+  if (!user) {
+    return response.status(404).json({ error: 'Usuário não encontrado' });
+  }
+
+  request.user = user;
+
+  return next();
 }
 
 function checksCreateTodosUserAvailability(request, response, next) {
-  // Complete aqui
+  const { user } = request;
+
+  if (user.todos.length >= 10 && user.pro === false) {
+    return response.status(403).json({ error: 'Limite de todos grátis atingido'});
+  }
+
+  next();
 }
 
 function checksTodoExists(request, response, next) {
